@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>lkts.cc</title>
+</head>
+<body class="bg-white text-gray-800 flex flex-col items-center justify-center min-h-screen">
+  <div class="text-gray-900 p-8 max-w-lg w-full mx-4 md:mx-auto">
+    <img src="/logo.svg" class="mx-auto opacity-95">
+    <form id="shorten-form" class="flex flex-col space-y-4">
+      <input
+        type="text"
+        id="url"
+        name="url"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 transition"
+        placeholder="Enter URL here"
+        required
+      />
+      <button
+        type="submit"
+        class="w-full py-3 bg-[#0c0c0c] text-white rounded-lg shadow-md hover:bg-[#181818] transition"
+      >
+        Shorten URL
+      </button>
+    </form>
+	<div id="result" class="mt-6 hidden mx-auto text-center">
+		<a href="#" id="shortened-url" class="text-lg font-semibold text-gray-900 hover:underline" target="_blank" rel="noopener noreferrer"></a>
+	  </div>	  
+  </div>
+
+  <script type="module">
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('shorten-form');
+  const resultDiv = document.getElementById('result');
+  const shortenedUrlA = document.getElementById('shortened-url');
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const urlToShorten = formData.get('url');
+    const response = await fetch(`/api/shorten?url=${encodeURIComponent(urlToShorten)}`);
+    
+    if (response.ok) {
+      const data = await response.json();
+      shortenedUrlA.href = data.shortUrl;
+      shortenedUrlA.textContent = data.shortUrl;
+      resultDiv.classList.remove('hidden');
+    } else {
+      console.error('Failed to shorten URL');
+      shortenedUrlA.textContent = 'Error shortening URL.';
+      resultDiv.classList.remove('hidden');
+    }
+  });
+});
+  </script>
+</body>
+</html>
